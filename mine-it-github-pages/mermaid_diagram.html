@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine-IT Data Platform - Mermaid Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .mermaid-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: auto;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .button {
+            display: inline-block;
+            background-color: #FF9900;
+            color: #232F3E;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .button:hover {
+            background-color: #e68a00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Mine-IT Predictive Maintenance Data Platform</h1>
+            <p class="subtitle">Mermaid Architecture Diagram</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Main Page</a></li>
+                <li><a href="aws_diagram.html">AWS Diagram</a></li>
+                <li><a href="mermaid_diagram.html">Mermaid Diagram</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <section>
+                <h2>Mine-IT Data Platform Architecture - Mermaid Diagram</h2>
+                <p>This diagram shows the complete architecture of the Mine-IT Predictive Maintenance data platform using Mermaid flowchart syntax.</p>
+                
+                <div class="button-container">
+                    <a href="index.html" class="button">Back to Main Page</a>
+                </div>
+                
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+flowchart TD
+    %% Define main sections
+    subgraph DataSources["Data Sources"]
+        IoTDevices["IoT Devices in Mines"]
+        InventoryAPI["Inventory Management\nSystem API"]
+        FieldServicesDB["On-Premises\nField Services RDBMS"]
+    end
+
+    subgraph DataIngestion["Data Ingestion Layer"]
+        %% IoT ingestion path
+        IoTCore["AWS IoT Core"]
+        IoTRules["IoT Rules"]
+        KinesisStreams["Kinesis Data Streams"]
+        KinesisAnalytics["Kinesis Data Analytics\n(10-min aggregation)"]
+        
+        %% Inventory system ingestion path
+        EventBridgeInventory["EventBridge\n(Hourly Schedule)"]
+        LambdaInventory["Lambda\nInventory API Connector"]
+        APIGateway["API Gateway\n(Alternative Push)"]
+        
+        %% Field services ingestion path
+        DirectConnect["AWS Direct Connect"]
+        DMS["Database Migration\nService (CDC)"]
+        EventBridgeField["EventBridge\n(Hourly Sync)"]
+    end
+
+    subgraph DataStorage["Data Storage Layer"]
+        S3Raw["S3 Raw Data Storage"]
+        S3Glacier["S3 Glacier\n(Long-term Archive)"]
+        DynamoDB["DynamoDB\n(Processed IoT Data)"]
+        RDS["RDS\n(Field Services Data)"]
+        Redshift["Redshift\n(Data Warehouse)"]
+        
+        %% Data retention policies
+        S3Lifecycle["S3 Lifecycle Policies"]
+        DynamoTTL["DynamoDB TTL"]
+    end
+
+    subgraph Processing["Processing Layer"]
+        Glue["AWS Glue\n(ETL & Data Catalog)"]
+        EMR["EMR\n(Large-scale Processing)"]
+        LambdaProcessing["Lambda\n(Transformations)"]
+        
+        subgraph MLModel["ML Model Deployment"]
+            SageMaker["SageMaker\n(Model Hosting)"]
+            SageMakerMonitor["SageMaker Model Monitor"]
+            LambdaInference["Lambda\n(Inference Trigger)"]
+            ModelRegistry["SageMaker Model Registry"]
+        end
+    end
+
+    subgraph AlertNotification["Alert & Notification Layer"]
+        EventBridgeAlerts["EventBridge\n(Alert Processing)"]
+        LambdaAlerts["Lambda\n(Alert Logic)"]
+        SNS["SNS\n(Notifications)"]
+        SQS["SQS\n(Subscriber Queues)"]
+    end
+
+    subgraph Reporting["Reporting Layer"]
+        Athena["Athena\n(SQL Analytics)"]
+        QuickSight["QuickSight\n(Dashboards)"]
+        LambdaReports["Lambda\n(Report Generation)"]
+    end
+
+    subgraph SecurityOps["Security & Operations"]
+        IAM["IAM\n(Role-Based Access)"]
+        KMS["KMS\n(Encryption)"]
+        CloudWatch["CloudWatch\n(Monitoring)"]
+        CloudTrail["CloudTrail\n(Audit Logging)"]
+    end
+
+    %% Define data flows
+    
+    %% IoT data flow
+    IoTDevices -->|MQTT/HTTP| IoTCore --> IoTRules --> KinesisStreams --> KinesisAnalytics
+    KinesisAnalytics --> S3Raw
+    KinesisAnalytics --> DynamoDB
+    
+    %% Inventory data flow
+    EventBridgeInventory --> LambdaInventory
+    InventoryAPI -->|JSON| LambdaInventory --> S3Raw
+    InventoryAPI -->|Push Updates| APIGateway --> LambdaInventory
+    
+    %% Field services data flow
+    FieldServicesDB --> DirectConnect --> DMS --> S3Raw
+    FieldServicesDB --> DirectConnect --> DMS --> RDS
+    EventBridgeField --> DMS
+    
+    %% Processing flows
+    S3Raw --> Glue
+    Glue --> Redshift
+    Glue --> S3Raw
+    S3Raw --> EMR --> S3Raw
+    
+    %% ML model flow
+    DynamoDB --> LambdaInference
+    RDS --> LambdaInference
+    Redshift --> LambdaInference
+    LambdaInference --> SageMaker
+    SageMaker --> SageMakerMonitor
+    SageMaker --> ModelRegistry
+    
+    %% Alert flow
+    SageMaker --> EventBridgeAlerts --> LambdaAlerts --> SNS
+    SNS --> SQS
+    
+    %% Reporting flow
+    Redshift --> Athena --> QuickSight
+    EventBridgeAlerts --> LambdaReports
+    LambdaReports --> S3Raw
+    S3Raw --> Athena
+    
+    %% Data retention
+    S3Raw --- S3Lifecycle
+    S3Lifecycle --> S3Glacier
+    DynamoDB --- DynamoTTL
+    
+    %% Security and operations
+    IAM -..- KMS
+    CloudWatch -..- CloudTrail
+
+    %% Define styles
+    classDef aws fill:#FF9900,stroke:#232F3E,color:#232F3E,stroke-width:2px;
+    classDef external fill:#1EC1E6,stroke:#0B4D6C,color:#0B4D6C,stroke-width:2px;
+    classDef storage fill:#3F8624,stroke:#1E4F18,color:#1E4F18,stroke-width:2px;
+    classDef security fill:#C7131F,stroke:#7A0C12,color:#7A0C12,stroke-width:2px;
+    
+    %% Apply styles
+    class IoTCore,IoTRules,KinesisStreams,KinesisAnalytics,EventBridgeInventory,LambdaInventory,APIGateway,DirectConnect,DMS,EventBridgeField,Glue,EMR,LambdaProcessing,SageMaker,LambdaInference,EventBridgeAlerts,LambdaAlerts,SNS,SQS,Athena,QuickSight,LambdaReports,SageMakerMonitor,ModelRegistry aws;
+    class IoTDevices,InventoryAPI,FieldServicesDB external;
+    class S3Raw,DynamoDB,RDS,Redshift,S3Glacier,S3Lifecycle,DynamoTTL storage;
+    class IAM,KMS,CloudWatch,CloudTrail security;
+                    </pre>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Mine-IT Data Platform Design</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true,
+                    curve: 'basis'
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine-IT Data Platform Architecture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #232F3E;
+            margin-bottom: 30px;
+        }
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .section {
+            border: 2px solid #232F3E;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            background-color: #232F3E;
+            color: white;
+            padding: 10px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 6px 6px 0 0;
+            font-weight: bold;
+        }
+        .components {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .component {
+            width: 150px;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .aws-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .component-name {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .component-desc {
+            font-size: 10px;
+            color: #666;
+        }
+        .flow-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .arrow {
+            width: 30px;
+            height: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23232F3E"><path d="M5 12h14M12 5l7 7-7 7"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .flow-label {
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+        }
+        
+        /* AWS Icon styles */
+        .icon-iot-core { background-image: url('images/aws-icons/iot-core.svg'); }
+        .icon-iot-rule { background-image: url('images/aws-icons/iot-core.svg'); }
+        .icon-kinesis { background-image: url('images/aws-icons/kinesis.svg'); }
+        .icon-lambda { background-image: url('images/aws-icons/lambda.svg'); }
+        .icon-eventbridge { background-image: url('images/aws-icons/eventbridge.svg'); }
+        .icon-api-gateway { background-image: url('images/aws-icons/api-gateway.svg'); }
+        .icon-direct-connect { background-image: url('images/aws-icons/direct-connect.svg'); }
+        .icon-dms { background-image: url('images/aws-icons/dms.svg'); }
+        .icon-s3 { background-image: url('images/aws-icons/s3.svg'); }
+        .icon-dynamodb { background-image: url('images/aws-icons/dynamodb.svg'); }
+        .icon-rds { background-image: url('images/aws-icons/rds.svg'); }
+        .icon-redshift { background-image: url('images/aws-icons/redshift.svg'); }
+        .icon-glue { background-image: url('images/aws-icons/glue.svg'); }
+        .icon-emr { background-image: url('images/aws-icons/emr.svg'); }
+        .icon-sagemaker { background-image: url('images/aws-icons/sagemaker.svg'); }
+        .icon-sns { background-image: url('images/aws-icons/sns.svg'); }
+        .icon-sqs { background-image: url('images/aws-icons/sqs.svg'); }
+        .icon-athena { background-image: url('images/aws-icons/athena.svg'); }
+        .icon-quicksight { background-image: url('images/aws-icons/quicksight.svg'); }
+        .icon-iam { background-image: url('images/aws-icons/iam.svg'); }
+        .icon-kms { background-image: url('images/aws-icons/kms.svg'); }
+        .icon-cloudwatch { background-image: url('images/aws-icons/cloudwatch.svg'); }
+        .icon-cloudtrail { background-image: url('images/aws-icons/cloudtrail.svg'); }
+        .icon-external { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect x="5" y="5" width="70" height="70" rx="10" fill="%231EC1E6"/><path d="M20 20h40v40H20z" fill="white"/><path d="M30 30h20v20H30z" fill="%231EC1E6"/></svg>'); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mine-IT Data Platform Architecture</h1>
+        
+        <div class="architecture">
+            <!-- Data Sources Section -->
+            <div class="section">
+                <div class="section-title">Data Sources</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-external"></div>
+                        <div class="component-name">IoT Devices</div>
+                        <div class="component-desc">Mining Equipment Sensors</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-external"></div>
+                        <div class="component-name">Inventory System</div>
+                        <div class="component-desc">JSON API</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-external"></div>
+                        <div class="component-name">Field Services</div>
+                        <div class="component-desc">On-Premises RDBMS</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Ingestion Section -->
+            <div class="section">
+                <div class="section-title">Data Ingestion Layer</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-iot-core"></div>
+                        <div class="component-name">AWS IoT Core</div>
+                        <div class="component-desc">Device Connectivity</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-iot-rule"></div>
+                        <div class="component-name">IoT Rules</div>
+                        <div class="component-desc">Message Routing</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-kinesis"></div>
+                        <div class="component-name">Kinesis Streams</div>
+                        <div class="component-desc">Real-time Data Streaming</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-kinesis"></div>
+                        <div class="component-name">Kinesis Analytics</div>
+                        <div class="component-desc">10-min Aggregation</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-eventbridge"></div>
+                        <div class="component-name">EventBridge</div>
+                        <div class="component-desc">Hourly Scheduling</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-lambda"></div>
+                        <div class="component-name">Lambda</div>
+                        <div class="component-desc">API Connectors</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-api-gateway"></div>
+                        <div class="component-name">API Gateway</div>
+                        <div class="component-desc">Push-based Updates</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-direct-connect"></div>
+                        <div class="component-name">Direct Connect</div>
+                        <div class="component-desc">On-premises Link</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-dms"></div>
+                        <div class="component-name">DMS</div>
+                        <div class="component-desc">Change Data Capture</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Storage Section -->
+            <div class="section">
+                <div class="section-title">Data Storage Layer</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-s3"></div>
+                        <div class="component-name">S3</div>
+                        <div class="component-desc">Raw Data Storage</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-dynamodb"></div>
+                        <div class="component-name">DynamoDB</div>
+                        <div class="component-desc">Processed IoT Data</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-rds"></div>
+                        <div class="component-name">RDS</div>
+                        <div class="component-desc">Field Services Data</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-redshift"></div>
+                        <div class="component-name">Redshift</div>
+                        <div class="component-desc">Data Warehouse</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Processing Section -->
+            <div class="section">
+                <div class="section-title">Processing Layer</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-glue"></div>
+                        <div class="component-name">AWS Glue</div>
+                        <div class="component-desc">ETL & Data Catalog</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-emr"></div>
+                        <div class="component-name">EMR</div>
+                        <div class="component-desc">Large-scale Processing</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-lambda"></div>
+                        <div class="component-name">Lambda</div>
+                        <div class="component-desc">Transformations</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-sagemaker"></div>
+                        <div class="component-name">SageMaker</div>
+                        <div class="component-desc">ML Model Hosting</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alert & Notification Section -->
+            <div class="section">
+                <div class="section-title">Alert & Notification Layer</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-eventbridge"></div>
+                        <div class="component-name">EventBridge</div>
+                        <div class="component-desc">Alert Processing</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-lambda"></div>
+                        <div class="component-name">Lambda</div>
+                        <div class="component-desc">Alert Logic</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-sns"></div>
+                        <div class="component-name">SNS</div>
+                        <div class="component-desc">Notifications</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-sqs"></div>
+                        <div class="component-name">SQS</div>
+                        <div class="component-desc">Subscriber Queues</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reporting Section -->
+            <div class="section">
+                <div class="section-title">Reporting Layer</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-athena"></div>
+                        <div class="component-name">Athena</div>
+                        <div class="component-desc">SQL Analytics</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-quicksight"></div>
+                        <div class="component-name">QuickSight</div>
+                        <div class="component-desc">Dashboards</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-lambda"></div>
+                        <div class="component-name">Lambda</div>
+                        <div class="component-desc">Report Generation</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security & Operations Section -->
+            <div class="section">
+                <div class="section-title">Security & Operations</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="aws-icon icon-iam"></div>
+                        <div class="component-name">IAM</div>
+                        <div class="component-desc">Access Control</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-kms"></div>
+                        <div class="component-name">KMS</div>
+                        <div class="component-desc">Encryption</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-cloudwatch"></div>
+                        <div class="component-name">CloudWatch</div>
+                        <div class="component-desc">Monitoring</div>
+                    </div>
+                    <div class="component">
+                        <div class="aws-icon icon-cloudtrail"></div>
+                        <div class="component-name">CloudTrail</div>
+                        <div class="component-desc">Audit Logging</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Data Flows -->
+            <div class="section">
+                <div class="section-title">Key Data Flows</div>
+                
+                <!-- IoT Flow -->
+                <div class="flow-container">
+                    <div class="flow">
+                        <div class="component">
+                            <div class="aws-icon icon-external"></div>
+                            <div class="component-name">IoT Devices</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-iot-core"></div>
+                            <div class="component-name">IoT Core</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-kinesis"></div>
+                            <div class="component-name">Kinesis</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-dynamodb"></div>
+                            <div class="component-name">DynamoDB</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ML Flow -->
+                <div class="flow-container">
+                    <div class="flow">
+                        <div class="component">
+                            <div class="aws-icon icon-dynamodb"></div>
+                            <div class="component-name">DynamoDB</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-lambda"></div>
+                            <div class="component-name">Lambda</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-sagemaker"></div>
+                            <div class="component-name">SageMaker</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-sns"></div>
+                            <div class="component-name">SNS</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reporting Flow -->
+                <div class="flow-container">
+                    <div class="flow">
+                        <div class="component">
+                            <div class="aws-icon icon-redshift"></div>
+                            <div class="component-name">Redshift</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-athena"></div>
+                            <div class="component-name">Athena</div>
+                        </div>
+                        <div class="arrow"></div>
+                        <div class="component">
+                            <div class="aws-icon icon-quicksight"></div>
+                            <div class="component-name">QuickSight</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
