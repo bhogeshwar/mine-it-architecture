@@ -18,10 +18,11 @@
         <div class="container">
             <ul>
                 <li><a href="#overview">Overview</a></li>
-                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#architecture">Architecture (Embedded)</a></li>
+                <li><a href="aws_architecture_page.html">AWS Architecture Diagram</a></li>
+                <li><a href="mermaid_diagram.html">Mermaid Diagram</a></li>
                 <li><a href="#components">Components</a></li>
                 <li><a href="#concerns">Key Concerns</a></li>
-                <li><a href="mermaid_diagram.html">Mermaid Diagram</a></li>
             </ul>
         </div>
     </nav>
@@ -46,7 +47,8 @@
             </section>
 
             <section id="architecture">
-                <h2>Architecture Diagram</h2>
+                <h2>Architecture Diagram (Embedded)</h2>
+                <p>An iframe embedding the AWS diagram. See the dedicated <a href="aws_architecture_page.html">AWS Architecture Diagram page</a> for a larger view or the <a href="mermaid_diagram.html">Mermaid Diagram page</a> for an alternative representation.</p>
                 <div class="diagram-container">
                     <iframe id="aws-diagram" src="aws_diagram.html" frameborder="0"></iframe>
                 </div>
@@ -321,9 +323,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Adjust iframe height to content
             const iframe = document.getElementById('aws-diagram');
-            iframe.onload = function() {
-                iframe.style.height = '800px';
-            };
+            if (iframe) { // Check if iframe exists on this page
+                iframe.onload = function() {
+                    // You might want to set a more dynamic height based on content
+                    // or a fixed appropriate height for the embedded diagram.
+                    iframe.style.height = '600px'; // Example height
+                };
+            }
         });
     </script>
 </body>

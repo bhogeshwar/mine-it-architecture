@@ -13,6 +13,8 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             overflow: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         
         .button-container {
@@ -22,8 +24,8 @@
         
         .button {
             display: inline-block;
-            background-color: #FF9900;
-            color: #232F3E;
+            background-color: #FF9900; /* AWS Orange */
+            color: #232F3E; /* AWS Dark Blue */
             padding: 10px 20px;
             border-radius: 5px;
             text-decoration: none;
@@ -32,7 +34,7 @@
         }
         
         .button:hover {
-            background-color: #e68a00;
+            background-color: #e68a00; /* Darker AWS Orange */
         }
     </style>
 </head>
@@ -48,7 +50,7 @@
         <div class="container">
             <ul>
                 <li><a href="index.html">Main Page</a></li>
-                <li><a href="aws_diagram.html">AWS Diagram</a></li>
+                <li><a href="aws_architecture_page.html">AWS Architecture</a></li>
                 <li><a href="mermaid_diagram.html">Mermaid Diagram</a></li>
             </ul>
         </div>
@@ -218,9 +220,10 @@ flowchart TD
                 flowchart: {
                     useMaxWidth: true,
                     htmlLabels: true,
-                    curve: 'basis'
+                    curve: 'basis' 
                 }
             });
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
         });
     </script>
 </body>
