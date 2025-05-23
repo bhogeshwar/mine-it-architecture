@@ -1,5 +1,15 @@
 # Mine-IT Predictive Maintenance Data Platform
 
+## 📎 Project Website
+
+Explore the interactive architecture and detailed design here:  
+🔗 [https://bhogeshwar.github.io/mine-it-architecture/](https://bhogeshwar.github.io/mine-it-architecture/)
+
+## 🖼 Architecture Diagram
+
+![Mine-IT AWS Architecture](https://bhogeshwar.github.io/mine-it-architecture/images/aws-icons/ArchitectureDiagram.png)
+
+
 ## Project Overview
 
 This repository contains the design and architecture for Mine-IT's Predictive Maintenance Data Platform built on AWS. The platform is designed to analyze data from IoT devices in mining equipment, inventory management systems, and field services systems to predict potential equipment failures before they occur, enabling proactive maintenance and minimizing operational disruptions.
